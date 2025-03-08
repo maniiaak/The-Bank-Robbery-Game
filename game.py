@@ -120,6 +120,9 @@ class Character(GameObject):
         if keys[pygame.K_DOWN] or y_axis > 0.5:
             self.y += self.speed
             self.moving_down = True
+        if keys[pygame.K_ESCAPE]:
+            exit()
+
 
         # Prevent going out of bounds
         self.x = max(0, min(WIDTH - self.size, self.x))
@@ -256,7 +259,7 @@ class Game():
                     if button_border_rect.collidepoint(mouse_pos):
                         click.play()  # Check if the click is within the button border
                         self.in_menu = False
-
+            
             # Fill the background with green dots
             for x in range(0, WIDTH, green_dot_bg.get_width()):
                 for y in range(0, HEIGHT, green_dot_bg.get_height()):
