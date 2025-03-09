@@ -2,7 +2,7 @@
 
 ## Description
 
-(met ce que tu veux)
+A fun 2D python game that uses the Pygame library!
 
 ## Installation
 
@@ -32,4 +32,5 @@ python game.py
 ## How to Play
 
 1. Start the game by running the command above.
-2. Follow the on-screen instructions
+2. Avoid the police cars while collecting cash on the ground.
+3. Press the escape key to leave the game.
