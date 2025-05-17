@@ -29,6 +29,20 @@ To run the game, use the following command:
 python game.py
 ```
 
+You can also compile it with `pyinstaller`:
+
+on Windows :
+
+```bash
+pyinstaller --onefile --add-data "assets;assets" game.py
+```
+
+on Linux/MacOS:
+
+```bash
+pyinstaller --onefile --add-data "assets:assets" game.py
+```
+
 ## How to Play
 
 1. Start the game by running the command above.

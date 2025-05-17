@@ -1,6 +1,41 @@
-import pygame
-import random
 import math
+import random
+import sys
+
+import pygame
+
+
+def is_frozen():
+    """
+    Checks if the Python script is running in a frozen state (e.g., packaged by PyInstaller).
+
+    Returns:
+        bool: True if the script is running as a bundled executable, False otherwise.
+    """
+    return getattr(sys, "frozen", False)
+
+
+def get_asset_path(relative_path: str):
+    """
+    Returns the absolute path to a resource file, handling both normal Python execution and PyInstaller executables.
+    Args:
+        relative_path (str): The relative path to the resource file.
+    Returns:
+        str: The absolute path to the resource file, adjusted for the current execution context.
+    Notes:
+        - If running as a PyInstaller executable, uses the temporary folder assigned by PyInstaller.
+        - If running as a standard Python script, uses the current working directory.
+    """
+    if is_frozen():
+        # Exécutable PyInstaller (.exe)
+        base_path = sys._MEIPASS
+    else:
+        # Script Python normal
+        import os
+
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 # Initialize pygame
 pygame.init()
@@ -13,20 +48,26 @@ WIDTH, HEIGHT = screen.get_size()
 pygame.display.set_caption("DON'T GET CAUGHT!!!")
 
 # Load images
-player_img = pygame.image.load("Assets/player.png")  # Normal Player sprite
-player_down_img = pygame.image.load("Assets/player_down.png")  # Player going down
-green_dot_img = pygame.image.load("Assets/green_dot.png")  # Collectible
-red_enemy_img = pygame.image.load("Assets/red_enemy.png")  # Enemy (both static and moving)
-policecarblue = pygame.image.load("Assets/police-car-siren-blue.png")
-policecarred = pygame.image.load("Assets/police-car-siren-red.png")
+player_img = pygame.image.load(
+    get_asset_path("Assets/player.png")
+)  # Normal Player sprite
+player_down_img = pygame.image.load(
+    get_asset_path("Assets/player_down.png")
+)  # Player going down
+green_dot_img = pygame.image.load(get_asset_path("Assets/green_dot.png"))  # Collectible
+red_enemy_img = pygame.image.load(
+    get_asset_path("Assets/red_enemy.png")
+)  # Enemy (both static and moving)
+policecarblue = pygame.image.load(get_asset_path("Assets/police-car-siren-blue.png"))
+policecarred = pygame.image.load(get_asset_path("Assets/police-car-siren-red.png"))
 
 # Load sound effects
-money_sound = pygame.mixer.Sound("Assets/money.wav")
-siren = pygame.mixer.Sound("Assets/siren.mp3")
-click = pygame.mixer.Sound("Assets/click.mp3")
-highscore_vfx = pygame.mixer.Sound("Assets/highscore.mp3")
+money_sound = pygame.mixer.Sound(get_asset_path("Assets/money.wav"))
+siren = pygame.mixer.Sound(get_asset_path("Assets/siren.mp3"))
+click = pygame.mixer.Sound(get_asset_path("Assets/click.mp3"))
+highscore_vfx = pygame.mixer.Sound(get_asset_path("Assets/highscore.mp3"))
 
-pygame.mixer.music.load("Assets/ocean8.mp3")
+pygame.mixer.music.load(get_asset_path("Assets/ocean8.mp3"))
 
 money_sound.set_volume(0.3)
 siren.set_volume(0.3)
@@ -47,11 +88,11 @@ font = pygame.font.Font(None, 36)
 
 # Global score tracking
 try:
-    with open('highscore.txt', 'r') as file:
+    with open(get_asset_path("highscore.txt"), "r") as file:
         highscore = int(file.read().strip())
 except FileNotFoundError:
     # Create the file with a default high score (e.g., 0)
-    with open('highscore.txt', 'w') as file:
+    with open(get_asset_path("highscore.txt"), "w") as file:
         file.write('0')
     highscore = 0
 
@@ -219,7 +260,7 @@ class Game():
     def show_menu(self):
         menu_font = pygame.font.Font(None, 74)
         button_font = pygame.font.Font(None, 50)
-        
+
         # Define the button text and its rectangle
         button_text = button_font.render("START", True, (0, 255, 0))  # Green button text
         button_rect = button_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
@@ -229,8 +270,12 @@ class Game():
         button_border_color = (0, 255, 0)  # Green border
 
         # Load menu images
-        menu_image1 = pygame.image.load("Assets/player.png")  # Replace with your image path
-        menu_image2 = pygame.image.load("Assets/red_enemy.png")  # Replace with your image path
+        menu_image1 = pygame.image.load(
+            get_asset_path("Assets/player.png")
+        )  # Replace with your image path
+        menu_image2 = pygame.image.load(
+            get_asset_path("Assets/red_enemy.png")
+        )  # Replace with your image path
 
         # Resize images (optional)
         menu_image1 = pygame.transform.scale(menu_image1, (150, 150))  # Resize to 150x150
@@ -241,7 +286,9 @@ class Game():
         menu_image2_rect = menu_image2.get_rect(center=(3 * WIDTH // 4, HEIGHT // 2))  # Right side
 
         # Load green dot image for the background
-        green_dot_bg = pygame.image.load("Assets/green_dot.png")  # Replace with your green dot image path
+        green_dot_bg = pygame.image.load(
+            get_asset_path("Assets/green_dot.png")
+        )  # Replace with your green dot image path
         green_dot_bg = pygame.transform.scale(green_dot_bg, (30, 30))  # Resize to 30x30
 
         # Timer for flashing title
@@ -259,7 +306,7 @@ class Game():
                     if button_border_rect.collidepoint(mouse_pos):
                         click.play()  # Check if the click is within the button border
                         self.in_menu = False
-            
+
             # Fill the background with green dots
             for x in range(0, WIDTH, green_dot_bg.get_width()):
                 for y in range(0, HEIGHT, green_dot_bg.get_height()):
