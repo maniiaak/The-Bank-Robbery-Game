@@ -1,7 +1,7 @@
 import math
 import random
 import sys
-
+import os
 import pygame
 
 
@@ -31,7 +31,7 @@ def get_asset_path(relative_path: str):
         base_path = sys._MEIPASS
     else:
         # Script Python normal
-        import os
+        #import os
 
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
